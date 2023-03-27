@@ -23334,11 +23334,84 @@ cr.behaviors.solid = function(runtime)
 	};
 	behaviorProto.acts = new Acts();
 }());
+;
+;
+cr.behaviors.wrap = function(runtime)
+{
+	this.runtime = runtime;
+};
+(function ()
+{
+	var behaviorProto = cr.behaviors.wrap.prototype;
+	behaviorProto.Type = function(behavior, objtype)
+	{
+		this.behavior = behavior;
+		this.objtype = objtype;
+		this.runtime = behavior.runtime;
+	};
+	var behtypeProto = behaviorProto.Type.prototype;
+	behtypeProto.onCreate = function()
+	{
+	};
+	behaviorProto.Instance = function(type, inst)
+	{
+		this.type = type;
+		this.behavior = type.behavior;
+		this.inst = inst;				// associated object instance to modify
+		this.runtime = type.runtime;
+	};
+	var behinstProto = behaviorProto.Instance.prototype;
+	behinstProto.onCreate = function()
+	{
+		this.mode = this.properties[0];		// 0 = wrap to layout, 1 = wrap to viewport
+	};
+	behinstProto.tick = function ()
+	{
+		var inst = this.inst;
+		inst.update_bbox();
+		var bbox = inst.bbox;
+		var layer = inst.layer;
+		var layout = layer.layout;
+		var lbound = 0, rbound = 0, tbound = 0, bbound = 0;
+		if (this.mode === 0)
+		{
+			rbound = layout.width;
+			bbound = layout.height;
+		}
+		else
+		{
+			lbound = layer.viewLeft;
+			rbound = layer.viewRight;
+			tbound = layer.viewTop;
+			bbound = layer.viewBottom;
+		}
+		if (bbox.right < lbound)
+		{
+			inst.x = (rbound - 1) + (inst.x - bbox.left);
+			inst.set_bbox_changed();
+		}
+		else if (bbox.left > rbound)
+		{
+			inst.x = (lbound + 1) - (bbox.right - inst.x);
+			inst.set_bbox_changed();
+		}
+		else if (bbox.bottom < tbound)
+		{
+			inst.y = (bbound - 1) + (inst.y - bbox.top);
+			inst.set_bbox_changed();
+		}
+		else if (bbox.top > bbound)
+		{
+			inst.y = (tbound + 1) - (bbox.bottom - inst.y);
+			inst.set_bbox_changed();
+		}
+	};
+}());
 cr.getObjectRefTable = function () { return [
 	cr.plugins_.Audio,
 	cr.plugins_.Browser,
-	cr.plugins_.Mouse,
 	cr.plugins_.Keyboard,
+	cr.plugins_.Mouse,
 	cr.plugins_.TiledBg,
 	cr.plugins_.Sprite,
 	cr.behaviors.Sin,
@@ -23349,6 +23422,7 @@ cr.getObjectRefTable = function () { return [
 	cr.behaviors.Bullet,
 	cr.behaviors.LOS,
 	cr.behaviors.Fade,
+	cr.behaviors.wrap,
 	cr.system_object.prototype.cnds.OnLayoutStart,
 	cr.plugins_.Audio.prototype.acts.Stop,
 	cr.plugins_.Audio.prototype.acts.Play,
@@ -23367,6 +23441,9 @@ cr.getObjectRefTable = function () { return [
 	cr.system_object.prototype.cnds.Else,
 	cr.plugins_.Browser.prototype.acts.Close,
 	cr.system_object.prototype.acts.CreateObject,
+	cr.behaviors.Bullet.prototype.acts.SetAngleOfMotion,
+	cr.plugins_.Mouse.prototype.cnds.OnClick,
+	cr.plugins_.Sprite.prototype.acts.Destroy,
 	cr.plugins_.Sprite.prototype.acts.SetSize,
 	cr.system_object.prototype.exps.layoutwidth,
 	cr.system_object.prototype.exps.layoutheight,
@@ -23380,14 +23457,12 @@ cr.getObjectRefTable = function () { return [
 	cr.plugins_.Sprite.prototype.acts.SetAnim,
 	cr.plugins_.Sprite.prototype.exps.X,
 	cr.plugins_.Sprite.prototype.exps.Y,
-	cr.plugins_.Sprite.prototype.acts.Destroy,
 	cr.behaviors.Flash.prototype.acts.Flash,
 	cr.plugins_.Sprite.prototype.cnds.IsMirrored,
 	cr.plugins_.Sprite.prototype.acts.SetMirrored,
 	cr.plugins_.Sprite.prototype.cnds.OnAnimFinished,
 	cr.plugins_.Keyboard.prototype.cnds.IsKeyDown,
 	cr.behaviors.Platform.prototype.acts.SimulateControl,
-	cr.behaviors.Bullet.prototype.acts.SetAngleOfMotion,
 	cr.behaviors.Platform.prototype.cnds.IsMoving,
 	cr.behaviors.Platform.prototype.cnds.IsOnFloor,
 	cr.behaviors.Platform.prototype.cnds.OnMove,
