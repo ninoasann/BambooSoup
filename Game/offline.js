@@ -1,5 +1,5 @@
 ﻿{
-	"version": 1679911569,
+	"version": 1680005171,
 	"fileList": [
 		"data.js",
 		"c2runtime.js",
@@ -97,6 +97,9 @@
 		"images/c2-sheet0.png",
 		"images/cd-sheet0.png",
 		"images/cdpic-sheet0.png",
+		"images/pai-sheet0.png",
+		"images/tpic-sheet0.png",
+		"images/bhpframe-sheet0.png",
 		"media/menu.ogg",
 		"media/mom_attack.ogg",
 		"media/mom_walk.ogg",
