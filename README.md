@@ -15,4 +15,4 @@ Member
 --------------------------------------------------
  Gamelink : https://ninoasann.github.io/BambooSoup/Game/
 
- GameReview : https://youtu.be/3Fcv8tuLmaQ
+ GameReview : https://youtu.be/WBXsjqLoY6I
